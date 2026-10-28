@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data: https://azure.assets.harvey.ai; connect-src 'none'; webrtc 'block'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none';" /><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1220"><title>Mis Inversiones</title>
+<style>
+:root{--bg:#0b1220;--card:#131c2e;--tx:#e6ebf2;--mu:#8b97a8;--ac:#4c8dd6;--ac2:#2f6fb0;--ok:#34c38f;--ko:#f06565;--wa:#e0a440;--bd:#222d42}
+*{box-sizing:border-box}body{margin:0;font-family:ui-rounded,"SF Pro Rounded","Nunito","Varela Round","Quicksand","M PLUS Rounded 1c","Arial Rounded MT Bold",-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;background:var(--bg);color:var(--tx);padding-bottom:96px}
+header{padding:calc(14px + env(safe-area-inset-top)) 16px 14px;font-weight:700;font-size:17px;letter-spacing:.2px;position:sticky;top:0;background:rgba(11,18,32,.92);backdrop-filter:blur(8px);color:var(--tx);border-bottom:1px solid var(--bd);z-index:5;display:flex;justify-content:space-between;align-items:center}
+main{padding:12px;max-width:720px;margin:auto}.card{background:var(--card);border-radius:20px;padding:16px;margin-bottom:12px;border:1px solid var(--bd);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+h2{font-size:15px;margin:0 0 12px;color:var(--ac);font-weight:700;display:flex;align-items:center;gap:6px}.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kpi{background:var(--card);border-radius:18px;padding:12px;border:1px solid var(--bd)}.kpi small{color:var(--mu);font-size:12px}.kpi b{display:block;font-size:19px;margin-top:4px;font-weight:700;font-variant-numeric:tabular-nums}
+.pos{color:var(--ok)}.neg{color:var(--ko)}.mu{color:var(--mu);font-size:12px}
+nav{position:fixed;bottom:calc(10px + env(safe-area-inset-bottom));left:10px;right:10px;border-radius:24px;border:1px solid var(--bd)!important;box-shadow:0 6px 20px rgba(0,0,0,.4);display:flex;background:var(--card);border-top:1px solid var(--bd);z-index:9}
+nav button{flex:1;background:none;border:0;color:var(--mu);padding:6px 2px 10px;font-size:10.5px;font-family:inherit}nav button.on{color:var(--ac);font-weight:700}nav span{display:flex;justify-content:center;margin:0 auto 3px;width:46px;padding:4px 0;border-radius:999px}nav button.on span{background:rgba(76,141,214,.16)}
+label{display:block;font-size:12px;color:var(--mu);margin:8px 0 3px}
+input,select{width:100%;padding:11px 14px;border-radius:14px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:15px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:999px;padding:11px 18px;font-weight:600;display:inline-flex;align-items:center;gap:6px;font-size:14px;margin-top:10px}
+.btn.sec{background:transparent;color:var(--tx);border:1px solid var(--bd)}.btn.del{background:transparent;color:var(--ko);border:1px solid #5a2a2f}.btn.sm{padding:6px 12px;font-size:12px;margin-top:4px}
+.item{border-top:1px solid var(--bd);padding:10px 0}.item:first-child{border-top:0}.flex{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.tag{font-size:10px;padding:3px 9px;border-radius:999px;background:#1d2940;color:#a9c4e6;font-weight:600;margin-right:4px}
+.bar{height:8px;border-radius:999px;background:var(--bd);overflow:hidden;margin-top:4px}.bar i{display:block;height:100%;border-radius:999px;background:var(--ac)}
+table{width:100%;border-collapse:collapse;font-size:12px}td,th{padding:6px 4px;border-bottom:1px solid var(--bd);text-align:right}td:first-child,th:first-child{text-align:left}
+.warn{border-radius:14px!important;background:rgba(224,164,64,.1);color:#f0c27a;display:flex;gap:6px;align-items:flex-start;flex-wrap:wrap;border-left:3px solid var(--wa);padding:8px;border-radius:6px;font-size:12px;margin-top:6px}
+.seg{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}.seg button{flex:1;padding:8px;border-radius:999px;border:1px solid var(--bd);background:none;color:var(--tx)}.seg button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.hide{display:none}#toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--ac);color:#fff;padding:10px 20px;border-radius:999px;font-weight:600;display:none;z-index:20}
+svg text{fill:var(--mu);font-size:10px}.ic{vertical-align:-3px;flex-shrink:0}header .btn{border-radius:999px!important;background:var(--card);color:var(--tx);border:1px solid var(--bd)}.buy{background:rgba(52,195,143,.15)!important;color:var(--ok)!important}.sell{background:rgba(240,101,101,.15)!important;color:var(--ko)!important}
+button,input,select{font-family:inherit}table{border-radius:12px;overflow:hidden}</style></head><body>
+<header><span id="hd">Mis Inversiones</span><button class="btn sm" id="privBtn" onclick="togglePriv()" aria-label="Ocultar importes"></button></header>
+<main id="main"></main><div id="toast"></div>
+<nav>
+<button data-v="dash" class="on"><span data-i="home"></span>Resumen</button>
+<button data-v="pos"><span data-i="briefcase"></span>Cartera</button>
+<button data-v="ops"><span data-i="plus"></span>Operar</button>
+<button data-v="plans"><span data-i="repeat"></span>Auto</button>
+<button data-v="tax"><span data-i="file"></span>Renta</button>
+<button data-v="cfg"><span data-i="gear"></span>Ajustes</button>
+</nav>
+<script>
+const IC={"search":"<circle cx=\"11\" cy=\"11\" r=\"7\"/><path d=\"m20 20-3.5-3.5\"/>","back":"<path d=\"M15 18l-6-6 6-6\"/>","tag":"<path d=\"M20 12 12 20 3 11V3h8z\"/><circle cx=\"7.5\" cy=\"7.5\" r=\"1.5\"/>","upload":"<path d=\"M12 21V9M7 14l5-5 5 5M4 3h16\"/>","calc":"<rect x=\"5\" y=\"3\" width=\"14\" height=\"18\" rx=\"2\"/><path d=\"M8 7h8M8 12h2M14 12h2M8 16h2M14 16h2\"/>","home": "<path d=\"M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3z\"/>", "briefcase": "<rect x=\"3\" y=\"7\" width=\"18\" height=\"13\" rx=\"2\"/><path d=\"M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18\"/>", "plus": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 8v8M8 12h8\"/>", "repeat": "<path d=\"M17 2l4 4-4 4\"/><path d=\"M3 11V9a3 3 0 0 1 3-3h15\"/><path d=\"M7 22l-4-4 4-4\"/><path d=\"M21 13v2a3 3 0 0 1-3 3H3\"/>", "file": "<path d=\"M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z\"/><path d=\"M14 3v6h6M8 13h8M8 17h5\"/>", "gear": "<circle cx=\"12\" cy=\"12\" r=\"3\"/><path d=\"M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z\"/>", "eye": "<path d=\"M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>", "chart": "<path d=\"M3 3v18h18\"/><path d=\"M7 15l4-4 3 3 5-6\"/>", "target": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1\"/>", "camera": "<path d=\"M3 8a2 2 0 0 1 2-2h2l2-2h6l2 2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/><circle cx=\"12\" cy=\"13\" r=\"3.5\"/>", "clock": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/>", "edit": "<path d=\"M12 20h9\"/><path d=\"M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z\"/>", "trash": "<path d=\"M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14\"/>", "check": "<path d=\"M20 6 9 17l-5-5\"/>", "pause": "<path d=\"M9 5v14M15 5v14\"/>", "play": "<path d=\"M7 4l13 8-13 8z\"/>", "alert": "<path d=\"M12 3 2 21h20z\"/><path d=\"M12 10v5M12 18h.01\"/>", "download": "<path d=\"M12 3v12M7 10l5 5 5-5M4 21h16\"/>"};
+const I=(n,s=16)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IC[n]}</svg>`;
+const DEF_BROKERS=["MyInvestor","Trade Republic","Revolut","Robinhood"];
+Object.defineProperty(window,"BROKERS",{get(){const l=(typeof D!=="undefined"&&D&&D.brokers)||DEF_BROKERS;const extra=(typeof D!=="undefined"&&D?[...new Set(D.ops.flatMap(o=>[o.broker,o.toBroker]).filter(Boolean))]:[]).filter(b=>!l.includes(b));return[...l,...extra]}});
+const TYPES=["Fondo indexado","ETF","Acción","Cripto","Plan de pensiones","Otro"];
+const KEY="misInversiones_v1";
+let mem=null,priv=false,view="dash",opFilter="all",opType="all",posFilter="all",opQ="",dateF="all",dFrom="",dTo="",posDate="",tagF="",curAsset=null,imp0=null;
+const SEED={"assets":[],"ops":[],"plans":[],"divs":[],"snaps":[],"cash":{},"goal":0,"mig1":true};
+function blank(){return{assets:[],ops:[],plans:[],divs:[],snaps:[],cash:{},goal:0}}
+function load(){try{const s=localStorage.getItem(KEY);if(s)return JSON.parse(s)}catch(e){}return mem||JSON.parse(JSON.stringify(SEED))}
+let D=load();
+function migrate(){if(D.mig1)return;const ids=[...new Set(D.ops.filter(o=>o.broker=="MyInvestor").map(o=>o.asset))];
+  ids.forEach(id=>{if(!D.plans.some(p=>p.asset===id&&p.broker=="MyInvestor"))D.plans.push({id:uid(),asset:id,broker:"MyInvestor",amount:100,day:31,every:1,start:"2026-10-29",active:true,done:[],skip:[]})});
+  D.mig1=true;save()}
+function save(){mem=D;try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}}
+const uid=()=>Math.random().toString(36).slice(2,10);
+const fmt=n=>priv?"•••• €":(n||0).toLocaleString("es-ES",{style:"currency",currency:"EUR",useGrouping:"always"});
+const fq=n=>(+n||0).toLocaleString("es-ES",{maximumFractionDigits:6});
+const pct=n=>isFinite(n)?(n>=0?"+":"")+n.toFixed(2)+" %":"–";
+const cls=n=>n>=0?"pos":"neg";
+const today=()=>new Date().toISOString().slice(0,10);
+const A=id=>D.assets.find(a=>a.id===id)||{name:"?",ticker:""};
+function toast(t){const e=document.getElementById("toast");e.textContent=t;e.style.display="block";setTimeout(()=>e.style.display="none",1800)}
+function togglePriv(){priv=!priv;render()}
+
+/* ---------- FIFO engine (criterio FIFO de la normativa IRPF) ---------- */
+function engine(){
+  const lots={},sales=[],pos={},trs={};
+  const ops=[...D.ops].sort((a,b)=>a.date.localeCompare(b.date)||(a.type==="buy"?-1:1));
+  for(const o of ops){
+    const k=o.asset+"|"+o.broker; lots[k]=lots[k]||[];
+    if(o.type==="transfer"){let rem=+o.qty,cost=0;const k2=o.toAsset+"|"+o.toBroker;lots[k2]=lots[k2]||[];const ratio=+o.toQty/+o.qty;const mv=[];
+      while(rem>1e-12&&lots[k].length){const l=lots[k][0];const t=Math.min(rem,l.q);const c=l.c*t/l.q;cost+=c;l.c-=c;l.q-=t;rem-=t;mv.push({q:t*ratio,c,date:l.date,id:l.id,tr:o.id});if(l.q<=1e-12)lots[k].shift()}
+      lots[k2].push(...mv);lots[k2].sort((x,y)=>x.date.localeCompare(y.date));trs[o.id]={cost,short:rem>1e-9};continue}
+    if(o.type==="buy"){lots[k].push({q:+o.qty,c:(+o.qty*+o.price)+(+o.fee||0),date:o.date,id:o.id})}
+    else{
+      let rem=+o.qty,cost=0;const used=[];
+      while(rem>1e-12&&lots[k].length){const l=lots[k][0];const t=Math.min(rem,l.q);const c=l.c*t/l.q;cost+=c;l.c-=c;l.q-=t;rem-=t;used.push({date:l.date,q:t});if(l.q<=1e-12)lots[k].shift()}
+      const proceeds=(+o.qty*+o.price)-(+o.fee||0);
+      sales.push({...o,cost,proceeds,pl:proceeds-cost,used,short:rem>1e-9});
+    }
+  }
+  for(const k in lots){const [asset,broker]=k.split("|");const q=lots[k].reduce((s,l)=>s+l.q,0);if(q<1e-6)continue;
+    const c=lots[k].reduce((s,l)=>s+l.c,0);const a=A(asset);const v=q*(+a.price||0);
+    pos[k]={asset,broker,q,cost:c,value:v,pl:v-c,avg:c/q}}
+  // regla 2 meses (art. 33.5 LIRPF): pérdida con recompra homogénea 2 meses antes/después (12 meses si no cotiza)
+  for(const s of sales){if(s.pl>=0)continue;const d=new Date(s.date);
+    const win=(A(s.asset).type==="Fondo indexado"||A(s.asset).type==="Plan de pensiones")?12:2;
+    const lo=new Date(d);lo.setMonth(lo.getMonth()-win);const hi=new Date(d);hi.setMonth(hi.getMonth()+win);
+    s.wash=D.ops.some(o=>o.type==="buy"&&o.asset===s.asset&&o.id!==s.id&&new Date(o.date)>=lo&&new Date(o.date)<=hi&&o.date!==s.date);s.win=win}
+  return{pos:Object.values(pos),sales,lots,trs}
+}
+
+/* ---------- Aportaciones automáticas ---------- */
+function lastDay(y,m){return new Date(y,m+1,0).getDate()}
+function runDate(day,y,m){return new Date(y,m,Math.min(day,lastDay(y,m)))}
+function pendingRuns(){const out=[];const now=new Date();now.setHours(23,59,59);
+  for(const p of D.plans){if(!p.active)continue;let start=new Date(p.start+"T00:00:00");let y=start.getFullYear(),m=start.getMonth();
+    for(let i=0;i<240;i++){const d=runDate(+p.day,y,m);if(d>now)break;
+      if(d>=start){const ds=d.toLocaleDateString("sv-SE");if(!(p.done||[]).includes(ds)&&!(p.skip||[]).includes(ds))out.push({plan:p,date:ds})}
+      m+=+p.every||1;if(m>11){y+=Math.floor(m/12);m%=12}}}
+  return out.sort((a,b)=>a.date.localeCompare(b.date))}
+function nextRun(p){const now=new Date();let y=now.getFullYear(),m=now.getMonth();for(let i=0;i<24;i++){const d=runDate(+p.day,y,m);if(d>=new Date(p.start)&&d.toLocaleDateString("sv-SE")>=today())return d.toLocaleDateString("es-ES");m++;if(m>11){m=0;y++}}return"–"}
+
+/* ---------- vistas ---------- */
+function opts(arr,sel){return arr.map(x=>`<option ${x==sel?"selected":""}>${x}</option>`).join("")}
+function assetOpts(sel){return D.assets.map(a=>`<option value="${a.id}" ${a.id==sel?"selected":""}>${a.name}${a.ticker?" ("+a.ticker+")":""}</option>`).join("")}
+function totals(E){const inv=E.pos.reduce((s,p)=>s+p.cost,0),val=E.pos.reduce((s,p)=>s+p.value,0);
+  const real=E.sales.reduce((s,x)=>s+x.pl,0),div=D.divs.reduce((s,d)=>s+(+d.gross||0),0),cash=Object.values(D.cash).reduce((s,c)=>s+(+c||0),0);return{inv,val,real,div,cash}}
+
+function vDash(){const E=engine(),T=totals(E);const pend=pendingRuns();
+  const byB={};E.pos.forEach(p=>byB[p.broker]=(byB[p.broker]||0)+p.cost);
+  const byT={};E.pos.forEach(p=>{const t=A(p.asset).type||"Otro";byT[t]=(byT[t]||0)+p.cost});
+  const bars=o=>{const tot=Object.values(o).reduce((a,b)=>a+b,0)||1;return Object.entries(o).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div style="margin:6px 0"><div class="flex"><span>${k}</span><span>${fmt(v)} · ${(v/tot*100).toFixed(1)}%</span></div><div class="bar"><i style="width:${v/tot*100}%"></i></div></div>`).join("")||'<p class="mu">Sin posiciones todavía.</p>'};
+  const bought=D.ops.filter(o=>o.type=="buy").reduce((s,o)=>s+amt(o),0),sold=D.ops.filter(o=>o.type=="sell").reduce((s,o)=>s+amt(o),0);
+  const goal=D.goal>0?`<div class="card"><h2>${I("target")} Objetivo de inversión</h2><div class="flex"><span>${fmt(T.inv)} de ${fmt(D.goal)}</span><b>${(T.inv/D.goal*100).toFixed(1)}%</b></div><div class="bar"><i style="width:${Math.min(100,T.inv/D.goal*100)}%"></i></div></div>`:"";
+  const bk=D.ops.length&&(!D.lastBackup||(Date.now()-new Date(D.lastBackup))/864e5>30);
+  return `${bk?`<div class="card warn" style="font-size:14px">${I("alert")}<span style="flex:1">${D.lastBackup?"Hace más de un mes de tu última copia de seguridad.":"Aún no has hecho ninguna copia de seguridad."}</span> <button class="btn sm" onclick="backup()">Hacer copia</button></div>`:""}${pend.length?`<div class="card warn" style="font-size:14px">${I("repeat")}<span style="flex:1">Tienes <b>${pend.length}</b> aportación(es) automática(s) pendientes de confirmar.</span> <button class="btn sm" onclick="go('plans')">Revisar</button></div>`:""}
+  <div class="kpis">
+   <div class="kpi"><small>Invertido en posiciones abiertas</small><b>${fmt(T.inv)}</b></div>
+   <div class="kpi"><small>Activos abiertos</small><b>${E.pos.length}</b></div>
+   <div class="kpi"><small>Beneficio/pérdida realizado</small><b class="${cls(T.real)}">${fmt(T.real)}</b></div>
+   <div class="kpi"><small>Dividendos brutos</small><b>${fmt(T.div)}</b></div>
+  </div><br>${goal}
+  <div class="card"><h2>${I("chart")} Dinero invertido en el tiempo</h2>${chart()}</div>
+  <div class="card"><h2>Por plataforma</h2>${bars(byB)}</div>${contrib()}${feesCard()}
+  <div class="card"><h2>Por tipo de activo</h2>${bars(byT)}</div>`}
+
+let CH=[];
+function investedAt(date){const keep=D.ops;D.ops=keep.filter(o=>o.date<=date);const c=engine().pos.reduce((s,p)=>s+p.cost,0);D.ops=keep;return c}
+let cMode="m";
+function newMoney(){const ops=[...D.ops].sort((a,b)=>a.date.localeCompare(b.date)||(a.type==="sell"?-1:1));let pool=0;const r={};
+  for(const o of ops){if(o.type=="sell"){pool+=amt(o);continue}if(o.type!="buy")continue;const a=amt(o);let re=0;
+    if(o.origin=="new")re=0;else if(o.origin=="reinv")re=a;else re=Math.min(pool,a);pool=Math.max(0,pool-re);r[o.id]={nw:a-re,re}}return r}
+function contrib(){const NM=newMoney();const buys=D.ops.filter(o=>o.type=="buy"&&NM[o.id]);const reTot=buys.reduce((s,o)=>s+NM[o.id].re,0);if(!buys.length)return"";const m={},y={};buys.forEach(o=>{const n=NM[o.id].nw;if(n<0.005)return;m[o.date.slice(0,7)]=(m[o.date.slice(0,7)]||0)+n;y[o.date.slice(0,4)]=(y[o.date.slice(0,4)]||0)+n});if(!Object.keys(m).length)return"";
+  const t=today();const last=[];let yy=+t.slice(0,4),mm=+t.slice(5,7)-1;for(let i=0;i<12;i++){last.unshift(`${yy}-${String(mm+1).padStart(2,"0")}`);mm--;if(mm<0){mm=11;yy--}}
+  const mx=Math.max(...last.map(k=>m[k]||0))||1;const MES=["E","F","M","A","M","J","J","A","S","O","N","D"];
+  const first=Object.keys(m).sort()[0];const nMonths=(+t.slice(0,4)-+first.slice(0,4))*12+(+t.slice(5,7)-+first.slice(5,7))+1;const tot=buys.reduce((s,o)=>s+NM[o.id].nw,0);
+  return`<div class="card"><h2>${I("plus")} Aportaciones de dinero nuevo</h2><p class="mu">No cuenta el dinero de ventas que reinviertes ni los traspasos. Reinvertido hasta ahora: <b>${fmt(reTot)}</b>.</p>
+  <div style="display:flex;align-items:flex-end;gap:4px;height:110px;margin:6px 0">${last.map(k=>`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%" title="${k}: ${fmt(m[k]||0)}" onclick="toast('${k.split("-").reverse().join("/")}: '+fmt(${m[k]||0}))"><div style="width:100%;background:var(--ac);border-radius:6px 6px 3px 3px;height:${(m[k]||0)/mx*90}%;min-height:${m[k]?3:0}px"></div><span class="mu" style="font-size:10px;margin-top:3px">${MES[+k.slice(5)-1]}</span></div>`).join("")}</div>
+  <p class="mu">Últimos 12 meses · toca una barra para ver el importe.</p>
+  <table><tr><th>Año</th><th>Aportado</th><th>Media/mes</th></tr>${Object.keys(y).sort().reverse().map(k=>{const months=k==t.slice(0,4)?+t.slice(5,7)-(k==first.slice(0,4)?+first.slice(5,7)-1:0):12-(k==first.slice(0,4)?+first.slice(5,7)-1:0);return`<tr><td>${k}</td><td>${fmt(y[k])}</td><td>${fmt(y[k]/Math.max(1,months))}</td></tr>`}).join("")}</table>
+  <p class="mu">Media mensual desde tu primera compra: <b>${fmt(tot/nMonths)}</b></p></div>`}
+function feesCard(){const f={};let tot=0;D.ops.forEach(o=>{if(!+o.fee)return;const k=o.broker,y=o.date.slice(0,4);f[k]=f[k]||{};f[k][y]=(f[k][y]||0)+ +o.fee;tot+=+o.fee});if(!tot)return"";
+  const ys=[...new Set(D.ops.filter(o=>+o.fee).map(o=>o.date.slice(0,4)))].sort();
+  return`<div class="card"><h2>Comisiones pagadas</h2><table><tr><th>Plataforma</th>${ys.map(y=>`<th>${y}</th>`).join("")}<th>Total</th></tr>${Object.keys(f).map(b=>`<tr><td>${b}</td>${ys.map(y=>`<td>${fmt(f[b][y]||0)}</td>`).join("")}<td><b>${fmt(Object.values(f[b]).reduce((a,c)=>a+c,0))}</b></td></tr>`).join("")}</table><p class="mu">Total: <b>${fmt(tot)}</b>. Solo las comisiones que has registrado en cada operación.</p></div>`}
+function backup(){D.lastBackup=new Date().toISOString();save();dl('inversiones_backup_'+today()+'.json',JSON.stringify(D,null,1),'application/json');render()}
+function chart(){const od=D.ops.map(o=>o.date).sort();if(!od.length)return'<p class="mu">Aparecerá cuando tengas operaciones.</p>';
+  const ds=[];let y=+od[0].slice(0,4),m=+od[0].slice(5,7)-1;const tdy=today();
+  while(true){const e=new Date(y,m+1,0).toLocaleDateString("sv-SE");const cur=e>=tdy;ds.push(cur?tdy:e);if(cur||ds.length>600)break;m++;if(m>11){m=0;y++}}
+  if(ds.length<2)return'<p class="mu">Aparecerá cuando tengas operaciones en varios meses.</p>';
+  const s=ds.map(d=>[d,investedAt(d)]);CH=s;
+  const W=320,H=150,P=26;const vs=s.map(x=>x[1]);const mx=Math.max(...vs),mn=0;const r=mx-mn||1;
+  const t0=new Date(s[0][0]).getTime(),t1=new Date(s[s.length-1][0]).getTime()||t0+1;
+  const X=d=>P+(new Date(d).getTime()-t0)/((t1-t0)||1)*(W-P*2),Y=v=>H-P-(v-mn)/r*(H-P*2-10);
+  const path=s.map((x,i)=>`${i?"L":"M"}${X(x[0]).toFixed(1)},${Y(x[1]).toFixed(1)}`).join("");
+  const f=d=>d.split("-").reverse().join("/");
+  return `<div style="position:relative"><svg id="chsvg" viewBox="0 0 ${W} ${H}" width="100%" style="touch-action:pan-y">
+  <path d="${path} L${X(s[s.length-1][0])},${H-P} L${X(s[0][0])},${H-P}Z" fill="rgba(76,141,214,.12)"/>
+  <path d="${path}" stroke="#4c8dd6" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <line id="chl" x1="0" x2="0" y1="${P-10}" y2="${H-P}" stroke="#8b97a8" stroke-dasharray="3" visibility="hidden"/>
+  ${s.map((x,i)=>`<circle cx="${X(x[0])}" cy="${Y(x[1])}" r="3" fill="#4c8dd6"/><circle cx="${X(x[0])}" cy="${Y(x[1])}" r="14" fill="transparent" style="cursor:pointer" onmouseenter="chTip(${i},${X(x[0])},${Y(x[1])})" onclick="chTip(${i},${X(x[0])},${Y(x[1])})"/>`).join("")}
+  <circle id="chd" r="5.5" fill="#4c8dd6" stroke="#e6ebf2" stroke-width="2" visibility="hidden" pointer-events="none"/>
+  <text x="${P}" y="${H-8}">${f(s[0][0]).slice(3)}</text><text x="${W-P}" y="${H-8}" text-anchor="end">${f(s[s.length-1][0]).slice(3)}</text><text x="2" y="12">${priv?"":Math.round(mx)+" €"}</text></svg>
+  <div id="chtip" style="display:none;position:absolute;top:0;background:#1d2940;border:1px solid var(--bd);border-radius:12px;padding:6px 10px;font-size:12px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.4)"></div></div>
+  <p class="mu">Dinero invertido en posiciones abiertas al final de cada mes (el último punto es hoy). Toca o pasa el cursor por un punto.</p>`}
+function chTip(i,x,y){const [d,v]=CH[i];const t=document.getElementById("chtip"),svg=document.getElementById("chsvg");
+  const k=svg.getBoundingClientRect().width/320;const mes=new Date(d+"T12:00").toLocaleDateString("es-ES",{month:"long",year:"numeric"});t.innerHTML=`<b>${fmt(v)}</b><br><span class="mu">${i==CH.length-1&&d==today()?"Hoy ("+new Date(d+"T12:00").toLocaleDateString("es-ES")+")":"Final de "+mes}</span>`;
+  t.style.display="block";const w=t.offsetWidth;let left=x*k-w/2;left=Math.max(0,Math.min(left,svg.getBoundingClientRect().width-w));t.style.left=left+"px";t.style.top=Math.max(0,y*k-52)+"px";
+  const dt=document.getElementById("chd");dt.setAttribute("cx",x);dt.setAttribute("cy",y);dt.setAttribute("visibility","visible");const l=document.getElementById("chl");l.setAttribute("x1",x);l.setAttribute("x2",x);l.setAttribute("visibility","visible")}
+function snap(silent){const T=totals(engine());const d=today();D.snaps=D.snaps.filter(x=>x.d!==d);D.snaps.push({d,v:T.val,c:T.inv});D.snaps.sort((a,b)=>a.d.localeCompare(b.d));save();if(!silent){toast("Foto guardada");render()}}
+
+function vPos(){const keep=D.ops;if(posDate)D.ops=keep.filter(o=>o.date<=posDate);const E=engine();D.ops=keep;const allPos=E.pos;E.pos=E.pos.filter(p=>(posFilter==="all"||p.broker===posFilter)&&(!tagF||(A(p.asset).tags||[]).includes(tagF)));const rows=E.pos.sort((a,b)=>b.cost-a.cost).map(p=>{const a=A(p.asset);return`<div class="item" onclick="openAsset('${p.asset}')" style="cursor:pointer">
+  <div class="flex"><b>${a.name}</b><b>${fmt(p.cost)}</b></div>
+  <div class="flex mu"><span><span class="tag">${p.broker}</span><span class="tag">${a.type||""}</span>${(a.tags||[]).map(t=>`<span class="tag" style="background:rgba(76,141,214,.16)">#${t}</span>`).join("")}</span><span>${I("back",14).replace("M15 18l-6-6 6-6","M9 18l6-6-6-6")}</span></div>
+  <div class="mu">${fq(p.q)} uds · Precio medio de compra ${fmt(p.avg)}</div></div>`}).join("")||'<p class="mu">Aún no hay posiciones. Ve a Operar.</p>';
+  const tc=E.pos.reduce((s,p)=>s+p.cost,0);
+  const brk=BROKERS.map(b=>{const ps=allPos.filter(p=>p.broker===b);const c=ps.reduce((s,p)=>s+p.cost,0);const rl=engine().sales.filter(x=>x.broker===b).reduce((s,x)=>s+x.pl,0);return`<div class="item flex" onclick="posFilter='${b}';render()" style="cursor:pointer"><span><b>${b}</b><br><span class="mu">${ps.length} activo(s) abiertos</span></span><span style="text-align:right"><b>${fmt(c)}</b><br><span class="${cls(rl)}" style="font-size:12px">Realizado ${fmt(rl)}</span></span></div>`}).join("");
+  return `<div class="card"><h2>${I("briefcase")} Por plataforma</h2>${brk}</div>
+  <div class="card"><h2>Posiciones abiertas</h2>
+  <label>Ver cartera a fecha (vacío = hoy)</label><div class="flex" style="margin-bottom:8px"><input type="date" value="${posDate}" onchange="posDate=this.value;render()">${posDate?`<button class="btn sm sec" onclick="posDate='';render()">Hoy</button>`:""}</div>
+  ${allTags().length?`<div class="seg"><button class="${!tagF?"on":""}" onclick="tagF='';render()">Todas las etiquetas</button>${allTags().map(t=>`<button class="${tagF==t?"on":""}" onclick="tagF='${t}';render()">#${t}</button>`).join("")}</div>`:""}<div class="seg"><button class="${posFilter=="all"?"on":""}" onclick="posFilter='all';render()">Todas</button>${BROKERS.map(b=>`<button class="${posFilter==b?"on":""}" onclick="posFilter='${b}';render()">${b.split(" ")[0]}</button>`).join("")}</div>
+  <div class="kpis" style="margin-bottom:8px"><div class="kpi"><small>Invertido${posFilter=="all"?"":" en "+posFilter}</small><b>${fmt(tc)}</b></div><div class="kpi"><small>Activos abiertos</small><b>${E.pos.length}</b></div></div>${rows}</div>
+  <div class="card"><h2>Activos</h2>${assetForm()}${D.assets.map(a=>`<div class="item flex"><span>${a.name} <span class="mu">${a.type} ${a.ticker||""}</span></span><span><button class="btn sm sec" onclick="editAsset('${a.id}')">${I("edit",14)}</button> <button class="btn sm del" onclick="delAsset('${a.id}')">${I("trash",14)}</button></span></div>`).join("")}</div>`}
+function assetForm(a={}){return`<div id="af"><input type="hidden" id="a_id" value="${a.id||""}"><label>Nombre</label><input id="a_name" value="${a.name||""}" placeholder="Vanguard Global Stock Index"><div class="row"><div><label>Ticker</label><input id="a_tk" value="${a.ticker||""}" placeholder="VWCE"></div><div><label>ISIN</label><input id="a_isin" value="${a.isin||""}" placeholder="IE00B03HCZ61"></div></div><label>Tipo</label><select id="a_type">${opts(TYPES,a.type)}</select><label>Etiquetas (separadas por comas)</label><input id="a_tags" value="${(a.tags||[]).join(", ")}" placeholder="largo plazo, especulativo"><label>Nota</label><input id="a_note" value="${a.note||""}" placeholder="Opcional"><button class="btn" onclick="saveAsset()">${a.id?"Guardar cambios":"Añadir activo"}</button></div>`}
+function saveAsset(){const n=v("a_name").trim();if(!n)return toast("Pon un nombre");const id=v("a_id");const o={name:n,ticker:v("a_tk").trim(),isin:v("a_isin").trim(),type:v("a_type"),tags:v("a_tags").split(",").map(x=>x.trim().toLowerCase()).filter(Boolean),note:v("a_note").trim()};
+  if(id)Object.assign(A(id),o);else D.assets.push({id:uid(),price:0,...o});save();toast("Activo guardado");render()}
+function allTags(){return[...new Set(D.assets.flatMap(a=>a.tags||[]))].sort()}
+function editAsset(id){if(view!="pos"){view="pos";render()}document.getElementById("af").outerHTML=assetForm(A(id));window.scrollTo(0,document.getElementById("af").offsetTop-80)}
+function delAsset(id){if(D.ops.some(o=>o.asset===id))return toast("Tiene operaciones: bórralas antes");D.assets=D.assets.filter(a=>a.id!==id);save();render()}
+function savePrices(){D.assets.forEach(a=>{const e=document.getElementById("pr_"+a.id);if(e&&e.value!==""&&+e.value!==+a.price){a.price=+e.value;a.pdate=new Date().toISOString()}});save();snap(true);toast("Precios actualizados");render()}
+const v=id=>document.getElementById(id).value;
+
+function vOps(){if(!D.assets.length)return`<div class="card"><h2>Primero crea un activo</h2>${assetForm()}</div>`;
+    setTimeout(()=>{if(document.getElementById("tr_src"))trUpd()},0);
+  return`<div class="card" id="opcard"><h2 id="opTitle">Nueva operación</h2><input type="hidden" id="o_id" value="">
+  <div class="seg"><button id="t_buy" class="on" onclick="setT('buy')">Compra</button><button id="t_sell" onclick="setT('sell')">Venta</button><button id="t_div" onclick="setT('div')">Dividendo</button></div>
+  <input type="hidden" id="o_type" value="buy">
+  <div class="row"><div><label>Fecha</label><input type="date" id="o_date" value="${today()}"></div><div><label>Plataforma</label><select id="o_broker">${opts(BROKERS)}</select></div></div>
+  <label>Activo</label><select id="o_asset">${assetOpts()}</select>
+  <div id="f_trade"><div class="row"><div><label>Moneda</label><select id="o_cur" onchange="curCh()"><option value="EUR">Euro (€)</option><option value="USD">Dólar ($)</option></select></div><div id="fxw" class="hide"><label>Tipo de cambio ($ por 1 €)</label><input type="number" step="any" inputmode="decimal" id="o_fx" placeholder="1,08"></div></div><div class="row"><div><label id="l_amt">Importe total € (opcional)</label><input type="number" step="any" inputmode="decimal" id="o_amt" oninput="calcQ()"></div><div><label id="l_pr">Precio por unidad €</label><input type="number" step="any" inputmode="decimal" id="o_price" oninput="calcQ()"></div></div>
+  <div class="row"><div><label>Participaciones/unidades</label><input type="number" step="any" inputmode="decimal" id="o_qty"></div><div><label>Comisión €</label><input type="number" step="any" inputmode="decimal" id="o_fee" value="0"></div></div></div>
+  <div id="f_div" class="hide"><div class="row"><div><label>Bruto €</label><input type="number" step="any" id="d_gross"></div><div><label>Retención origen €</label><input type="number" step="any" id="d_wh" value="0"></div></div><label>Retención España €</label><input type="number" step="any" id="d_whes" value="0"></div>
+  <div id="f_orig"><label>Origen del dinero</label><select id="o_orig"><option value="auto">Automático (usa antes el dinero de ventas previas)</option><option value="new">Dinero nuevo</option><option value="reinv">Reinversión de una venta</option></select></div><label>Nota</label><input id="o_note" placeholder="Opcional">
+  <button class="btn" onclick="saveOp()">Guardar</button> <button class="btn sec hide" id="opCancel" onclick="render()">Cancelar edición</button></div>
+  <div class="card"><h2>${I("repeat")} Traspaso entre fondos</h2><p class="mu">Mueve participaciones de un fondo a otro sin venta ni compra: se conserva el coste y la antigüedad de cada aportación (régimen de traspasos de fondos de inversión).</p>
+  ${trForm()}</div>
+  <div class="card"><h2>Historial</h2>
+  <div style="position:relative"><input id="opq" placeholder="Buscar activo, nota o ISIN" value="${opQ}" oninput="opQ=this.value;drawOps()" style="padding-left:38px"><span style="position:absolute;left:13px;top:12px;color:var(--mu)">${I("search")}</span></div><div style="height:8px"></div>
+  <div class="seg">${[["all","Todas"],["buy","Compras"],["sell","Ventas"],["transfer","Traspasos"]].map(([k,l])=>`<button class="${opType==k?"on":""}" onclick="opType='${k}';render()">${l}</button>`).join("")}</div><div class="seg"><button class="${opFilter=="all"?"on":""}" onclick="opFilter='all';render()">Todas</button>${BROKERS.map(b=>`<button class="${opFilter==b?"on":""}" onclick="opFilter='${b}';render()">${b.split(" ")[0]}</button>`).join("")}</div>
+  ${dateBar()}<div id="opsList">${opsList()}</div>
+  ${D.divs.length?`<h2 style="margin-top:14px">Dividendos / intereses</h2>`+D.divs.map(d=>`<div class="item flex"><span>${A(d.asset).name}<br><span class="mu">${d.date} · ${d.broker} · ret. ${fmt((+d.wh||0)+(+d.whes||0))}</span></span><span>${fmt(+d.gross)} <button class="btn sm del" onclick="delDiv('${d.id}')">${I("trash",14)}</button></span></div>`).join(""):""}</div>`}
+function inDate(d){if(dateF=="all")return true;const t=today();if(dateF=="m")return d.slice(0,7)==t.slice(0,7);if(dateF=="y")return d.slice(0,4)==t.slice(0,4);if(dateF=="r")return(!dFrom||d>=dFrom)&&(!dTo||d<=dTo);return true}
+function dateBar(){return`<div class="seg">${[["all","Todo"],["m","Este mes"],["y","Este año"],["r","Rango"]].map(([k,l])=>`<button class="${dateF==k?"on":""}" onclick="dateF='${k}';render()">${l}</button>`).join("")}</div>${dateF=="r"?`<div class="row" style="margin-bottom:8px"><div><label>Desde</label><input type="date" value="${dFrom}" onchange="dFrom=this.value;drawOps()"></div><div><label>Hasta</label><input type="date" value="${dTo}" onchange="dTo=this.value;drawOps()"></div></div>`:""}`}
+function opsList(){const E=engine();const sm={};E.sales.forEach(s=>sm[s.id]=s);const q=opQ.trim().toLowerCase();
+  const list=[...D.ops].filter(o=>(opFilter==="all"||o.broker===opFilter)&&(opType==="all"||o.type===opType)&&inDate(o.date)&&(!q||(A(o.asset).name+" "+(A(o.asset).isin||"")+" "+(A(o.asset).ticker||"")+" "+(o.note||"")).toLowerCase().includes(q))).sort((a,b)=>b.date.localeCompare(a.date));
+  const tb=list.filter(o=>o.type=="buy").reduce((s,o)=>s+amt(o),0),ts=list.filter(o=>o.type=="sell").reduce((s,o)=>s+amt(o),0);
+  return `<p class="mu">${list.length} operación(es)${list.length?` · compras ${fmt(tb)} · ventas ${fmt(ts)}`:""}</p>`+(list.map(o=>{const s=sm[o.id];if(o.type=="transfer"){const t=E.trs[o.id]||{};return`<div class="item"><div class="flex"><span><span class="tag" style="background:rgba(76,141,214,.18);color:#a9c4e6">TRASPASO</span>${A(o.asset).name} → ${A(o.toAsset).name}</span><button class="btn sm del" onclick="delOp('${o.id}')">${I("trash",14)}</button></div><div class="mu">${new Date(o.date).toLocaleDateString("es-ES")} · ${o.broker}${o.toBroker!=o.broker?" → "+o.toBroker:""} · sale ${fq(o.qty)} uds · entra ${fq(o.toQty)} uds · coste traspasado ${fmt(t.cost||0)}${o.value?" · valor "+fmt(+o.value):""}${o.note?" · "+o.note:""}</div>${t.short?'<div class="warn">Traspasas más participaciones de las que tenías.</div>':""}</div>`}
+  return`<div class="item"><div class="flex"><span onclick="openAsset('${o.asset}')" style="cursor:pointer"><span class="tag ${o.type=="buy"?"buy":"sell"}">${o.type=="buy"?"COMPRA":"VENTA"}</span>${A(o.asset).name}</span><span style="white-space:nowrap"><button class="btn sm sec" onclick="editOp('${o.id}')">${I("edit",14)}</button> <button class="btn sm del" onclick="delOp('${o.id}')">${I("trash",14)}</button></span></div>
+  <div class="mu">${new Date(o.date).toLocaleDateString("es-ES")} · ${o.broker} · ${fq(o.qty)} × ${fmt(+o.price)}${o.cur=="USD"?` (${fq(o.priceUSD)} $ a ${fq(o.fx)} $/€)`:""} · total ${fmt(amt(o))} ${+o.fee?"· com. "+fmt(+o.fee):""} ${o.plan?"· auto":""} ${o.note?"· "+o.note:""}</div>
+  ${s?`<div class="${cls(s.pl)}">Resultado FIFO: ${fmt(s.pl)}</div>${s.short?'<div class="warn">Vendes más unidades de las que constan compradas en esta plataforma.</div>':""}`:""}</div>`}).join("")||'<p class="mu">Sin operaciones con estos filtros.</p>')}
+function trForm(){const E=engine();const isF=id=>["Fondo indexado","Plan de pensiones"].includes(A(id).type);const src=E.pos.filter(p=>isF(p.asset)).length?E.pos.filter(p=>isF(p.asset)):E.pos;if(!src.length)return'<p class="mu">No tienes posiciones abiertas.</p>';
+  return`<label>Desde (fondo y plataforma)</label><select id="tr_src" onchange="trUpd()">${src.map(p=>`<option value="${p.asset}|${p.broker}">${A(p.asset).name} · ${p.broker} (${fq(p.q)} uds)</option>`).join("")}</select>
+  <div class="row"><div><label>Fecha</label><input type="date" id="tr_date" value="${today()}" onchange="trUpd()"></div><div><label>Qué traspasar</label><select id="tr_mode" onchange="trUpd()"><option value="all">Todo</option><option value="qty">Nº de participaciones</option><option value="eur">Importe en €</option><option value="pct">Porcentaje</option></select></div></div>
+  <div id="tr_qw" class="hide"><div class="row"><div><label id="tr_ql">Participaciones</label><input type="number" step="any" inputmode="decimal" id="tr_q" oninput="trUpd()"></div><div id="tr_navw"><label>Valor liquidativo origen €</label><input type="number" step="any" inputmode="decimal" id="tr_nav" oninput="trUpd()"></div></div></div>
+  <p class="mu" id="tr_info"></p>
+  <label>Hacia (fondo destino)</label><select id="tr_dst">${(D.assets.filter(a=>isF(a.id)).length?D.assets.filter(a=>isF(a.id)):D.assets).map(a=>`<option value="${a.id}">${a.name}</option>`).join("")}</select>
+  <div class="row"><div><label>Plataforma destino</label><select id="tr_db">${opts(BROKERS,"MyInvestor")}</select></div><div><label>Participaciones recibidas</label><input type="number" step="any" inputmode="decimal" id="tr_tq"></div></div>
+  <label>Valor del traspaso € (opcional, informativo)</label><input type="number" step="any" inputmode="decimal" id="tr_val">
+  <label>Nota</label><input id="tr_note" placeholder="Opcional"><p class="mu">Si el fondo destino no existe, créalo antes en Cartera › Activos.</p>
+  <button class="btn" onclick="saveTr()">${I("repeat",14)} Registrar traspaso</button>`}
+function trCalc(){const [a,b]=v("tr_src").split("|");const d=v("tr_date")||today();const keep=D.ops;D.ops=keep.filter(o=>o.date<=d);const p=engine().pos.find(x=>x.asset==a&&x.broker==b);D.ops=keep;const have=p?p.q:0;
+  const m=v("tr_mode"),x=+v("tr_q"),nav=+v("tr_nav");let q=m=="all"?have:m=="qty"?x:m=="pct"?have*x/100:(nav?x/nav:0);return{a,b,have,q,cost:p?p.cost*Math.min(1,q/have):0}}
+function trUpd(){const m=v("tr_mode");document.getElementById("tr_qw").classList.toggle("hide",m=="all");document.getElementById("tr_ql").textContent=m=="eur"?"Importe €":m=="pct"?"Porcentaje %":"Participaciones";document.getElementById("tr_navw").classList.toggle("hide",m!="eur");
+  const c=trCalc();document.getElementById("tr_info").innerHTML=`Tienes ${fq(c.have)} uds a esa fecha · saldrían <b>${fq(c.q)}</b> uds · coste que se traspasa ${fmt(c.cost)}${c.q>c.have+1e-9?' · <span class="neg">más de lo que tienes</span>':""}`}
+function saveTr(){const c=trCalc();const tq=+v("tr_tq");if(!c.q||c.q>c.have+1e-9)return toast("Revisa la cantidad a traspasar");if(!tq)return toast("Indica las participaciones recibidas");
+  const dst=v("tr_dst"),db=v("tr_db");if(dst==c.a&&db==c.b)return toast("El destino es el mismo que el origen");
+  const ta=A(c.a).type,tb=A(dst).type;D.ops.push({id:uid(),type:"transfer",date:v("tr_date"),broker:c.b,asset:c.a,qty:+c.q.toFixed(8),toAsset:dst,toBroker:db,toQty:tq,price:0,fee:0,value:+v("tr_val")||0,note:v("tr_note")});save();
+  toast("Traspaso registrado");render();if(ta!="Fondo indexado"||tb!="Fondo indexado")setTimeout(()=>toast("Ojo: el régimen de traspasos solo aplica a fondos de inversión"),1900)}
+function drawOps(){const e=document.getElementById("opsList");if(e)e.innerHTML=opsList()}
+function curCh(){const u=v("o_cur")=="USD";document.getElementById("fxw").classList.toggle("hide",!u);document.getElementById("l_amt").textContent=u?"Importe total $ (opcional)":"Importe total € (opcional)";document.getElementById("l_pr").textContent=u?"Precio por unidad $":"Precio por unidad €"}
+function editOp(id){const o=D.ops.find(x=>x.id===id);if(view!="ops"){view="ops";render()}setT(o.type);const set=(k,x)=>document.getElementById(k).value=x;
+  set("o_id",o.id);set("o_orig",o.origin||"auto");set("o_date",o.date);set("o_broker",o.broker);set("o_asset",o.asset);set("o_qty",o.qty);set("o_note",o.note||"");set("o_amt","");
+  if(o.cur=="USD"){set("o_cur","USD");set("o_fx",o.fx);set("o_price",o.priceUSD);set("o_fee",o.feeUSD||0)}else{set("o_cur","EUR");set("o_price",+(+o.price).toFixed(8));set("o_fee",o.fee||0)}curCh();
+  document.getElementById("opTitle").textContent="Editar operación";document.getElementById("opCancel").classList.remove("hide");window.scrollTo(0,0)}
+function setT(t){document.getElementById("o_type").value=t;["buy","sell","div"].forEach(x=>document.getElementById("t_"+x).classList.toggle("on",x==t));document.getElementById("f_trade").classList.toggle("hide",t=="div");document.getElementById("f_div").classList.toggle("hide",t!="div");document.getElementById("f_orig").classList.toggle("hide",t!="buy")}
+function calcQ(){const a=+v("o_amt"),p=+v("o_price");if(a&&p)document.getElementById("o_qty").value=+(a/p).toFixed(6)}
+function saveOp(){const t=v("o_type");if(t=="div"){if(!+v("d_gross"))return toast("Indica el bruto");D.divs.push({id:uid(),date:v("o_date"),broker:v("o_broker"),asset:v("o_asset"),gross:+v("d_gross"),wh:+v("d_wh"),whes:+v("d_whes"),note:v("o_note")});save();toast("Dividendo guardado");return render()}
+  const q=+v("o_qty");let p=+v("o_price"),fee=+v("o_fee")||0;if(!q||!p)return toast("Faltan unidades o precio");
+  const cur=v("o_cur"),fx=+v("o_fx");let extra={};if(cur=="USD"){if(!fx)return toast("Indica el tipo de cambio");extra={cur:"USD",fx,priceUSD:p,feeUSD:fee};p=p/fx;fee=fee/fx}
+  const eid=v("o_id");const o={id:eid||uid(),type:t,origin:t=="buy"?v("o_orig"):undefined,date:v("o_date"),broker:v("o_broker"),asset:v("o_asset"),qty:q,price:p,fee,note:v("o_note"),...extra};
+  if(eid){const i=D.ops.findIndex(x=>x.id===eid);const old=D.ops[i];if(old.plan)o.plan=old.plan;D.ops[i]=o}else D.ops.push(o);
+  const a=A(o.asset);if(!a.price||o.date>=(a.pdate||"").slice(0,10)){a.price=p;a.pdate=new Date(o.date).toISOString()}
+  save();toast(eid?"Operación actualizada":t=="buy"?"Compra guardada":"Venta guardada");render()}
+let delArm=null;function delOp(id){if(delArm!==id){delArm=id;return toast("Pulsa otra vez para borrar")}delArm=null;D.ops=D.ops.filter(o=>o.id!==id);save();toast("Operación borrada");if(view=="asset")render();else drawOps()}
+function delDiv(id){D.divs=D.divs.filter(o=>o.id!==id);save();render()}
+
+function vPlans(){const pend=pendingRuns();
+  return`${pend.length?`<div class="card"><h2>Pendientes de confirmar (${pend.length})</h2><p class="mu">Introduce el precio real de ejecución que veas en la plataforma y confirma.</p>${pend.map((r,i)=>`<div class="item"><b>${A(r.plan.asset).name}</b> <span class="mu">${new Date(r.date).toLocaleDateString("es-ES")} · ${r.plan.broker} · ${fmt(+r.plan.amount)}</span>
+   <div class="row"><input type="number" step="any" inputmode="decimal" id="pp_${i}" placeholder="Precio ejecución €" value="${A(r.plan.asset).price||""}"><span><button class="btn sm" onclick="confirmRun(${i})">${I("check",14)} Confirmar</button> <button class="btn sm sec" onclick="skipRun(${i})">Omitir</button></span></div></div>`).join("")}
+   <button class="btn sec" onclick="confirmAll()">Confirmar todas con el precio indicado</button></div>`:""}
+  <div class="card"><h2>Nueva aportación periódica</h2>${D.assets.length?`
+   <label>Activo</label><select id="p_asset">${assetOpts()}</select>
+   <div class="row"><div><label>Plataforma</label><select id="p_broker">${opts(BROKERS)}</select></div><div><label>Importe €</label><input type="number" step="any" inputmode="decimal" id="p_amt"></div></div>
+   <div class="row"><div><label>Día del mes (31 = último día)</label><input type="number" min="1" max="31" id="p_day" value="31"></div><div><label>Frecuencia</label><select id="p_every"><option value="1">Mensual</option><option value="3">Trimestral</option><option value="6">Semestral</option><option value="12">Anual</option></select></div></div>
+   <label>Desde</label><input type="date" id="p_start" value="${today()}"><button class="btn" onclick="savePlan()">Crear plan</button>`:'<p class="mu">Crea antes un activo en Cartera.</p>'}</div>
+  <div class="card"><h2>Mis planes</h2>${D.plans.map(p=>`<div class="item"><div class="flex"><b>${A(p.asset).name}</b><b>${fmt(+p.amount)}</b></div><div class="mu">${p.broker} · día ${p.day} · cada ${p.every} mes(es) · próxima: ${p.active?nextRun(p):"pausado"} · ejecutadas: ${(p.done||[]).length}</div>
+   <button class="btn sm sec" onclick="togglePlan('${p.id}')">${p.active?I("pause",14)+" Pausar":I("play",14)+" Reanudar"}</button> <button class="btn sm del" onclick="delPlan('${p.id}')">${I("trash",14)}</button></div>`).join("")||'<p class="mu">Sin planes.</p>'}
+   ${D.plans.length?`<p class="mu">Aportación mensual equivalente: ${fmt(D.plans.filter(p=>p.active).reduce((s,p)=>s+p.amount/p.every,0))} · anual: ${fmt(D.plans.filter(p=>p.active).reduce((s,p)=>s+p.amount*12/p.every,0))}</p>`:""}</div>`}
+function savePlan(){const amt=+v("p_amt");if(!amt)return toast("Indica importe");D.plans.push({id:uid(),asset:v("p_asset"),broker:v("p_broker"),amount:amt,day:Math.min(31,Math.max(1,+v("p_day")||31)),every:+v("p_every"),start:v("p_start"),active:true,done:[],skip:[]});save();toast("Plan creado");render()}
+function execRun(r,price){const q=+(r.plan.amount/price).toFixed(6);D.ops.push({id:uid(),type:"buy",date:r.date,broker:r.plan.broker,asset:r.plan.asset,qty:q,price,fee:0,plan:r.plan.id});(r.plan.done=r.plan.done||[]).push(r.date);const a=A(r.plan.asset);if(!a.pdate||r.date>=a.pdate.slice(0,10)){a.price=price;a.pdate=new Date(r.date).toISOString()}}
+function confirmRun(i){const r=pendingRuns()[i];const p=+v("pp_"+i);if(!p)return toast("Pon el precio");execRun(r,p);save();toast("Aportación registrada");render()}
+function confirmAll(){const rs=pendingRuns();let n=0;rs.forEach((r,i)=>{const p=+v("pp_"+i);if(p){execRun(r,p);n++}});save();toast(n+" registradas");render()}
+function skipRun(i){const r=pendingRuns()[i];(r.plan.skip=r.plan.skip||[]).push(r.date);save();render()}
+function togglePlan(id){const p=D.plans.find(x=>x.id===id);p.active=!p.active;save();render()}
+function delPlan(id){D.plans=D.plans.filter(x=>x.id!==id);save();render()}
+
+/* ---------- Renta ---------- */
+const SCALE=[[6000,.19],[50000,.21],[200000,.23],[300000,.27],[Infinity,.30]];
+function hacienda(S){if(!S.length)return"";const G={};S.forEach(s=>{const t=A(s.asset).type;const g=t=="Fondo indexado"||t=="Plan de pensiones"?"Fondos de inversión (IIC)":t=="Cripto"?"Monedas virtuales":"Acciones y ETF admitidos a negociación";(G[g]=G[g]||[]).push(s)});
+  const fd=d=>d.split("-").reverse().join("/");
+  return`<div class="card"><h2>${I("file")} Formato para la declaración</h2><p class="mu">Una ficha por venta con los datos que pide el programa de la Renta. Las fechas de adquisición son las de las compras que se venden por FIFO.</p>
+  ${Object.entries(G).map(([g,ss])=>`<h2 style="margin-top:12px;font-size:13px">${g}</h2>${ss.map(s=>{const a=A(s.asset);return`<div class="item" style="font-size:13px">
+   <div class="flex"><b>${a.name}</b><span class="${cls(s.pl)}"><b>${fmt(s.pl)}</b></span></div>
+   <table style="margin-top:4px"><tr><td>Entidad</td><td>${s.broker}</td></tr>${a.isin?`<tr><td>ISIN</td><td>${a.isin}</td></tr>`:""}<tr><td>Fecha de transmisión</td><td>${fd(s.date)}</td></tr><tr><td>Valor de transmisión</td><td>${fmt(s.proceeds)}</td></tr>
+   <tr><td>Fecha(s) de adquisición</td><td>${[...new Set(s.used.map(u=>fd(u.date)))].join(", ")}</td></tr><tr><td>Valor de adquisición</td><td>${fmt(s.cost)}</td></tr>${s.wash?`<tr><td colspan=2 style="text-align:left">${I("alert",12)} Revisar regla de recompra</td></tr>`:""}</table></div>`}).join("")}
+   <p class="mu">Subtotal ${g.toLowerCase()}: transmisión ${fmt(ss.reduce((a,s)=>a+s.proceeds,0))} · adquisición ${fmt(ss.reduce((a,s)=>a+s.cost,0))} · resultado <b class="${cls(ss.reduce((a,s)=>a+s.pl,0))}">${fmt(ss.reduce((a,s)=>a+s.pl,0))}</b></p>`).join("")}</div>`}
+function taxOf(b){let t=0,prev=0;for(const[l,r]of SCALE){if(b<=prev)break;t+=(Math.min(b,l)-prev)*r;prev=l}return t}
+function vTax(){const E=engine();const years=[...new Set([...E.sales.map(s=>s.date.slice(0,4)),...D.divs.map(d=>d.date.slice(0,4)),String(new Date().getFullYear())])].sort().reverse();
+  const y=window.taxYear||years[0];const S=E.sales.filter(s=>s.date.startsWith(y));const Dv=D.divs.filter(d=>d.date.startsWith(y));
+  const gains=S.filter(s=>s.pl>0).reduce((a,s)=>a+s.pl,0),loss=S.filter(s=>s.pl<0).reduce((a,s)=>a+s.pl,0);
+  const blocked=S.filter(s=>s.wash).reduce((a,s)=>a+s.pl,0);const net=gains+loss-blocked;
+  const div=Dv.reduce((a,d)=>a+ +d.gross,0),whO=Dv.reduce((a,d)=>a+(+d.wh||0),0),whE=Dv.reduce((a,d)=>a+(+d.whes||0),0);
+  const base=Math.max(0,net)+div;const tax=taxOf(base);
+  const byA={};S.forEach(s=>{const k=A(s.asset).name+" · "+s.broker;byA[k]=byA[k]||{t:0,c:0,pl:0};byA[k].t+=s.proceeds;byA[k].c+=s.cost;byA[k].pl+=s.pl});
+  return`<div class="card"><h2>Ejercicio</h2><select onchange="taxYear=this.value;render()">${years.map(x=>`<option ${x==y?"selected":""}>${x}</option>`).join("")}</select></div>
+  <div class="kpis"><div class="kpi"><small>Ganancias</small><b class="pos">${fmt(gains)}</b></div><div class="kpi"><small>Pérdidas</small><b class="neg">${fmt(loss)}</b></div>
+  <div class="kpi"><small>Saldo neto ganancias/pérdidas</small><b class="${cls(net)}">${fmt(net)}</b></div><div class="kpi"><small>Dividendos/intereses brutos</small><b>${fmt(div)}</b></div></div><br>
+  ${blocked?`<div class="warn">${I("alert")} ${fmt(blocked)} de pérdidas posiblemente no computables este año por recompra de valores homogéneos dentro del plazo (2 meses en valores cotizados; aquí se usa 12 meses para fondos como criterio prudente). Se imputarían al vender los recomprados. Revísalo.</div><br>`:""}
+  <div class="card"><h2>Detalle por activo y plataforma</h2><table><tr><th>Activo</th><th>Transmisión</th><th>Adquisición</th><th>Resultado</th></tr>${Object.entries(byA).map(([k,x])=>`<tr><td>${k}</td><td>${fmt(x.t)}</td><td>${fmt(x.c)}</td><td class="${cls(x.pl)}">${fmt(x.pl)}</td></tr>`).join("")||'<tr><td colspan=4 class="mu">Sin ventas este año</td></tr>'}</table></div>
+  <div class="card"><h2>Ventas (para casillas de la Renta)</h2><table><tr><th>Fecha</th><th>Activo</th><th>Uds</th><th>Resultado</th></tr>${S.map(s=>`<tr><td>${s.date}</td><td>${A(s.asset).name}${s.wash?" "+I("alert",12):""}</td><td>${fq(s.qty)}</td><td class="${cls(s.pl)}">${fmt(s.pl)}</td></tr>`).join("")}</table>
+  <button class="btn sm sec" onclick="csvTax('${y}')">${I("download",14)} Exportar CSV ${y}</button></div>
+  ${hacienda(S)}<div class="card"><h2>Estimación orientativa de cuota (base del ahorro)</h2>
+  <p>Base estimada: <b>${fmt(base)}</b> → cuota aprox. <b>${fmt(tax)}</b></p>
+  <p class="mu">Retenciones ya practicadas en España: ${fmt(whE)} · Retención en origen (posible deducción por doble imposición internacional, con límites): ${fmt(whO)}</p>
+  <p class="mu">Escala estatal + autonómica general del ahorro vigente desde 2025: 19% hasta 6.000 €, 21% hasta 50.000 €, 23% hasta 200.000 €, 27% hasta 300.000 €, 30% a partir de 300.000 €. No considera compensación de pérdidas de años anteriores (4 años), el límite del 25% entre rendimientos y ganancias, ni regímenes forales. Los traspasos entre fondos en España no tributan: regístralos como venta+compra solo si cambias de fondo fuera del régimen de traspaso.</p></div>`}
+function isNative(){return !!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform())}
+async function saveBlob(name,b){if(isNative()){try{const P=window.Capacitor.Plugins;const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=rej;r.readAsDataURL(b)});
+    const w=await P.Filesystem.writeFile({path:name,data:b64,directory:"CACHE"});await P.Share.share({title:name,url:w.uri,dialogTitle:"Guardar o compartir "+name});return}catch(e){if(String(e&&e.message||e).toLowerCase().includes("cancel"))return;toast("No se pudo compartir el archivo");return}}
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove()}
+function dl(name,text,type){saveBlob(name,new Blob([text],{type}))}
+function csvTax(y){const S=engine().sales.filter(s=>s.date.startsWith(y));const rows=[["Fecha venta","Activo","ISIN","Plataforma","Unidades","Valor transmisión","Valor adquisición","Resultado","Fechas compra FIFO","Aviso 2 meses"]];
+  S.forEach(s=>rows.push([s.date,A(s.asset).name,A(s.asset).isin||"",s.broker,s.qty,s.proceeds.toFixed(2),s.cost.toFixed(2),s.pl.toFixed(2),s.used.map(u=>u.date).join(" "),s.wash?"SI":""]));
+  dl(`renta_${y}.csv`,"\ufeff"+rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(";")).join("\n"),"text/csv")}
+
+
+/* ---------- Exportación formato PDF ---------- */
+const amt=o=>o.type==="transfer"?0:o.type==="buy"?o.qty*o.price+(+o.fee||0):o.qty*o.price;
+const r2=n=>Math.round(n*100)/100;
+function sheetData(){const E=engine();const gen=[["Broker","Dinero invertido","Nº activos invertidos"]];let tot=0;const sheets=[];
+  for(const b of BROKERS){const ops=D.ops.filter(o=>o.broker===b||(o.type=="transfer"&&o.toBroker===b)).sort((x,y)=>y.date.localeCompare(x.date));
+    const ids=[...new Set(ops.flatMap(o=>o.type=="transfer"?[o.broker===b?o.asset:null,o.toBroker===b?o.toAsset:null].filter(Boolean):[o.asset]))];const open=E.pos.filter(p=>p.broker===b);const inv=open.reduce((s,p)=>s+p.cost,0);tot+=inv;
+    gen.push([b,r2(inv),ids.length]);
+    const L=[["Fecha","Activo","Transacción","Precio","Dinero invertido","Cantidad activo","Comisión","Nota"]].concat(ops.flatMap(o=>{const f=o.date.split("-").reverse().join("-");if(o.type=="transfer"){const c=r2((E.trs[o.id]||{}).cost||0);const r=[];if(o.broker===b)r.push([f,A(o.asset).name,"Traspaso salida","",c,+o.qty,0,"A "+A(o.toAsset).name]);if(o.toBroker===b)r.push([f,A(o.toAsset).name,"Traspaso entrada","",c,+o.toQty,0,"Desde "+A(o.asset).name]);return r}return[[f,A(o.asset).name,o.type=="buy"?"Compra":"Venta",+(+o.price).toFixed(6),r2(amt(o)),+o.qty,+o.fee||0,o.note||""]]}));
+    const Rr=[["Activo","Dinero invertido","Ventas","Beneficio","Cantidad activo","Status"]].concat(ids.map(id=>{const os=ops.filter(o=>o.asset===id&&o.broker===b);const tin=ops.filter(o=>o.type=="transfer"&&o.toAsset===id&&o.toBroker===b).reduce((s,o)=>s+((E.trs[o.id]||{}).cost||0),0),tout=os.filter(o=>o.type=="transfer").reduce((s,o)=>s+((E.trs[o.id]||{}).cost||0),0);const bi=os.filter(o=>o.type=="buy").reduce((s,o)=>s+amt(o),0)+tin-tout,se=os.filter(o=>o.type=="sell").reduce((s,o)=>s+amt(o),0);const p=open.find(p=>p.asset===id);return[A(id).name,r2(bi),r2(se),r2(se-bi),p?+p.q.toFixed(8):0,p?"Abierto":"Cerrado"]}));
+    const rows=[];for(let i=0;i<Math.max(L.length,Rr.length);i++)rows.push([...(L[i]||Array(8).fill("")),"",...(Rr[i]||[])]);sheets.push([b,rows])}
+  gen.push(["TOTAL",r2(tot),""]);return[["Resumen general",gen],...sheets]}
+function csvAll(){const rows=[["Plataforma","Fecha","Activo","Transacción","Precio","Dinero invertido","Cantidad activo","Comisión","Nota"]];
+  [...D.ops].sort((a,b)=>a.broker.localeCompare(b.broker)||b.date.localeCompare(a.date)).forEach(o=>rows.push([o.broker,o.date.split("-").reverse().join("-"),A(o.asset).name,o.type=="buy"?"Compra":o.type=="transfer"?"Traspaso a "+A(o.toAsset).name+" ("+o.toBroker+", "+o.toQty+" uds)":"Venta",String(+(+o.price).toFixed(6)).replace(".",","),String(r2(amt(o))).replace(".",","),String(+o.qty).replace(".",","),String(+o.fee||0).replace(".",","),o.note||""]));
+  dl("inversiones_"+today()+".csv","\ufeff"+rows.map(r=>r.map(x=>`"${String(x).replace(/"/g,'""')}"`).join(";")).join("\r\n"),"text/csv")}
+function crc32(b){let c,t=crc32.t;if(!t){t=crc32.t=[];for(let n=0;n<256;n++){c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}}c=-1;for(let i=0;i<b.length;i++)c=(c>>>8)^t[(c^b[i])&255];return(c^-1)>>>0}
+function zip(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;
+  const u16=n=>[n&255,n>>8&255],u32=n=>[n&255,n>>8&255,n>>16&255,n>>>24&255];
+  for(const[name,str]of files){const d=enc.encode(str),nm=enc.encode(name),cr=crc32(d);
+    const h=[...u32(0x04034b50),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0),...u32(cr),...u32(d.length),...u32(d.length),...u16(nm.length),...u16(0)];
+    parts.push(new Uint8Array(h),nm,d);
+    cen.push(new Uint8Array([...u32(0x02014b50),...u16(20),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0),...u32(cr),...u32(d.length),...u32(d.length),...u16(nm.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(off)]),nm);
+    off+=h.length+nm.length+d.length}
+  const cs=cen.reduce((s,x)=>s+x.length,0);const end=new Uint8Array([...u32(0x06054b50),...u16(0),...u16(0),...u16(files.length),...u16(files.length),...u32(cs),...u32(off),...u16(0)]);
+  return new Blob([...parts,...cen,end],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})}
+function xlsx(){const sh=sheetData();const esc=x=>String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const col=i=>{let s="";i++;while(i){const m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=Math.floor((i-1)/26)}return s};
+  const sx=rows=>`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><cols><col min="1" max="20" width="18" customWidth="1"/></cols><sheetData>${rows.map((r,ri)=>`<row r="${ri+1}">${r.map((v,ci)=>v===""?"":typeof v==="number"?`<c r="${col(ci)}${ri+1}"${ri==0?' s="1"':""}><v>${v}</v></c>`:`<c r="${col(ci)}${ri+1}" t="inlineStr"${ri==0?' s="1"':""}><is><t>${esc(v)}</t></is></c>`).join("")}</row>`).join("")}</sheetData></worksheet>`;
+  const files=[["[Content_Types].xml",`<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>${sh.map((_,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join("")}</Types>`],
+   ["_rels/.rels",`<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`],
+   ["xl/workbook.xml",`<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${sh.map((s,i)=>`<sheet name="${esc(s[0])}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join("")}</sheets></workbook>`],
+   ["xl/_rels/workbook.xml.rels",`<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${sh.map((_,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join("")}<Relationship Id="rId${sh.length+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`],
+   ["xl/styles.xml",`<?xml version="1.0" encoding="UTF-8"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf/></cellStyleXfs><cellXfs count="2"><xf/><xf fontId="1" applyFont="1"/></cellXfs></styleSheet>`],
+   ...sh.map((s,i)=>[`xl/worksheets/sheet${i+1}.xml`,sx(s[1])])];
+  saveBlob("inversiones_"+today()+".xlsx",zip(files))}
+function vCfg(){return`<div class="card"><h2>${I("download")} Exportar a Excel / CSV</h2><p class="mu">Mismo formato que tu PDF: una hoja de resumen general y una hoja por plataforma con las operaciones y el resumen de inversiones.</p><button class="btn" onclick="xlsx()">${I("download",14)} Descargar Excel</button> <button class="btn sec" onclick="csvAll()">${I("download",14)} Descargar CSV</button></div><div class="card"><h2>${I("upload")} Importar extracto CSV</h2><p class="mu">Sube el CSV de operaciones de tu bróker (o el que exporta esta app). Después indicas qué columna es cada dato.</p>
+  <label>Plataforma</label><select id="imB">${opts(BROKERS)}</select><label>Archivo .csv</label><input type="file" accept=".csv,text/csv" onchange="impCsv(this)"><div id="imOut"></div></div><div class="card"><h2>Copia de seguridad</h2><p class="mu">Los datos se guardan en este navegador del móvil. Exporta una copia de vez en cuando (y antes de borrar el navegador o cambiar de móvil).</p>
+  <button class="btn" onclick="backup()">${I("download",14)} Exportar copia</button><p class="mu">${D.lastBackup?"Última copia: "+new Date(D.lastBackup).toLocaleDateString("es-ES"):"Aún no has hecho ninguna copia."}</p>
+  <label>Importar copia (.json)</label><input type="file" accept=".json,application/json" onchange="imp(this)"></div>
+  <div class="card"><h2>${I("briefcase")} Mis plataformas</h2><p class="mu">Añade, renombra o quita brókers. Solo puedes quitar los que no tengan operaciones ni aportaciones automáticas.</p>
+  ${BROKERS.map((b,i)=>{const used=D.ops.some(o=>o.broker===b||o.toBroker===b)||D.plans.some(p=>p.broker===b);return`<div class="item flex"><span><b>${b}</b><br><span class="mu">${D.ops.filter(o=>o.broker===b||o.toBroker===b).length} operación(es)</span></span><span style="white-space:nowrap"><button class="btn sm sec" onclick="renBroker(${i})">${I("edit",14)}</button> <button class="btn sm del" ${used?'disabled style="opacity:.35"':""} onclick="delBroker(${i})">${I("trash",14)}</button></span></div>`}).join("")}
+  <div id="renBox"></div><label>Nueva plataforma</label><div class="flex"><input id="newB" placeholder="Ej.: Indexa Capital, Degiro, eToro…"><button class="btn sm" style="margin-top:0" onclick="addBroker()">${I("plus",14)} Añadir</button></div></div>
+  <div class="card"><h2>${I("target")} Objetivo</h2>
+  <label>Objetivo de inversión €</label><input type="number" id="c_goal" value="${D.goal||""}"><button class="btn" onclick="saveCfg()">Guardar</button></div>
+  <div class="card"><h2>Datos</h2><button class="btn sec" onclick="demo()">Cargar ejemplo</button> <button class="btn del" onclick="wipe()">Borrar todo</button><p class="mu" id="wipeMsg"></p></div>`}
+function parseCsv(t){t=t.replace(/^\ufeff/,"");const first=t.split(/\r?\n/)[0];const del=[";",",","\t"].sort((a,b)=>first.split(b).length-first.split(a).length)[0];const rows=[];let r=[],f="",q=false;
+  for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}else if(c=='"')q=true;else if(c==del){r.push(f);f=""}else if(c=="\n"||c=="\r"){if(c=="\r"&&t[i+1]=="\n")i++;r.push(f);f="";if(r.some(x=>x.trim()))rows.push(r);r=[]}else f+=c}
+  r.push(f);if(r.some(x=>x.trim()))rows.push(r);return rows}
+const IMF=[["date","Fecha",["fecha","date","datum","time"]],["asset","Activo (nombre)",["activo","nombre","name","instrument","description","descripción","producto","symbol","ticker"]],["isin","ISIN (opcional)",["isin"]],["type","Compra/Venta",["transacción","transaccion","tipo","type","side","operación","operacion"]],["qty","Cantidad",["cantidad","quantity","qty","shares","participaciones","titulos","títulos"]],["price","Precio (opcional)",["precio","price"]],["amount","Importe (opcional)",["dinero invertido","importe","amount","total","value"]],["fee","Comisión (opcional)",["comisión","comision","fee","fees","commission"]],["plat","Plataforma (opcional)",["plataforma","broker"]]];
+function impCsv(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const rows=parseCsv(r.result);if(rows.length<2)return toast("CSV vacío");imp0=rows;const h=rows[0];
+  const guess=keys=>{const i=h.findIndex(x=>keys.some(k=>x.trim().toLowerCase()==k));if(i>=0)return i;return h.findIndex(x=>keys.some(k=>x.trim().toLowerCase().includes(k)))};
+  document.getElementById("imOut").innerHTML=`<p class="mu">${rows.length-1} filas detectadas. Revisa las columnas:</p>${IMF.map(([k,l,keys])=>`<label>${l}</label><select id="im_${k}"><option value="-1">— ninguna —</option>${h.map((x,i)=>`<option value="${i}" ${guess(keys)==i?"selected":""}>${x||"(col "+(i+1)+")"}</option>`).join("")}</select>`).join("")}
+  <label>Formato de fecha</label><select id="im_df"><option value="auto">Automático</option><option value="dmy">Día-mes-año</option><option value="ymd">Año-mes-día</option><option value="mdy">Mes-día-año</option></select>
+  <label>Moneda de precios e importes</label><select id="im_cur"><option value="EUR">Euros</option><option value="USD">Dólares</option></select><div id="im_fxw"><label>Si son dólares, tipo de cambio ($ por 1 €)</label><input type="number" step="any" id="im_fx"></div>
+  <button class="btn" onclick="impRun()">${I("upload",14)} Importar</button>`};r.readAsText(f)}
+function pDate(x,fm){x=x.trim().slice(0,10).replace(/[./]/g,"-");let p=x.split("-");if(p.length<3)return null;if(p[0].length==4)return`${p[0]}-${p[1].padStart(2,"0")}-${p[2].padStart(2,"0")}`;
+  let d=p[0],m=p[1],y=p[2];if(fm=="mdy")[d,m]=[m,d];if(y.length==2)y="20"+y;return`${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`}
+function pNum(x){if(x==null)return NaN;x=String(x).replace(/[€$\s]/g,"");if(x.includes(",")&&x.includes("."))x=x.lastIndexOf(",")>x.lastIndexOf(".")?x.replace(/\./g,"").replace(",","."):x.replace(/,/g,"");else x=x.replace(",",".");return parseFloat(x)}
+function impRun(){const rows=imp0;const g=k=>+v("im_"+k);const fm=v("im_df"),usd=v("im_cur")=="USD",fx=+v("im_fx");if(usd&&!fx)return toast("Indica el tipo de cambio");
+  if(g("date")<0||g("asset")<0&&g("isin")<0||g("qty")<0)return toast("Faltan columnas: fecha, activo y cantidad");let n=0,skip=0;const B=v("imB");
+  for(const r of rows.slice(1)){const date=pDate(r[g("date")]||"",fm);let q=Math.abs(pNum(r[g("qty")]));const name=(g("asset")>=0?r[g("asset")]:"").trim(),isin=(g("isin")>=0?r[g("isin")]:"").trim();
+    const tt=(g("type")>=0?r[g("type")]:"").toLowerCase();let type=/vent|sell|verk|sale/.test(tt)?"sell":/compr|buy|kauf|purchase|savings|ahorro/.test(tt)?"buy":(pNum(r[g("qty")])<0?"sell":g("type")<0?"buy":null);
+    let pr=g("price")>=0?Math.abs(pNum(r[g("price")])):NaN,am=g("amount")>=0?Math.abs(pNum(r[g("amount")])):NaN,fee=g("fee")>=0?Math.abs(pNum(r[g("fee")]))||0:0;
+    if(!date||!q||!type||(!name&&!isin)){skip++;continue}if(usd){pr/=fx;am/=fx;fee/=fx}
+    if(!isFinite(pr)||!pr)pr=type=="buy"?(am-fee)/q:am/q;if(!isFinite(pr)||!pr){skip++;continue}
+    let a=D.assets.find(x=>(isin&&x.isin==isin)||(name&&x.name.toLowerCase()==name.toLowerCase()));if(!a){a={id:uid(),name:name||isin,ticker:"",isin,type:"Otro",price:0,tags:[]};D.assets.push(a)}
+    const plat=g("plat")>=0&&BROKERS.includes((r[g("plat")]||"").trim())?r[g("plat")].trim():B;
+    if(D.ops.some(o=>o.date==date&&o.asset==a.id&&o.broker==plat&&Math.abs(o.qty-q)<1e-9&&o.type==type)){skip++;continue}
+    D.ops.push({id:uid(),type,date,broker:plat,asset:a.id,qty:q,price:pr,fee,note:"Importado CSV",...(usd?{cur:"USD",fx}:{})});n++}
+  save();toast(n+" importadas");document.getElementById("imOut").innerHTML=`<p>${n} operaciones importadas · ${skip} filas omitidas (vacías, no reconocidas o duplicadas).</p><p class="mu">Los activos nuevos se crean con tipo "Otro": cámbialo en Cartera › Activos.</p>`}
+function setBrokers(l){D.brokers=l;save();render()}
+function addBroker(){const n=v("newB").trim();if(!n)return toast("Escribe un nombre");if(BROKERS.some(b=>b.toLowerCase()==n.toLowerCase()))return toast("Ya existe");setBrokers([...BROKERS,n]);toast("Plataforma añadida")}
+function delBroker(i){const b=BROKERS[i];if(D.ops.some(o=>o.broker===b||o.toBroker===b)||D.plans.some(p=>p.broker===b))return toast("Tiene operaciones: no se puede quitar");setBrokers(BROKERS.filter(x=>x!==b));toast("Plataforma quitada")}
+function renBroker(i){const b=BROKERS[i];document.getElementById("renBox").innerHTML=`<label>Nuevo nombre para ${b}</label><div class="flex"><input id="renB" value="${b}"><button class="btn sm" style="margin-top:0" onclick="doRen(${i})">${I("check",14)} Guardar</button></div>`;document.getElementById("renB").focus()}
+function doRen(i){const b=BROKERS[i],n=v("renB").trim();if(!n||n==b)return render();if(BROKERS.some(x=>x.toLowerCase()==n.toLowerCase()&&x!==b))return toast("Ya existe");
+  D.ops.forEach(o=>{if(o.broker===b)o.broker=n;if(o.toBroker===b)o.toBroker=n});D.divs.forEach(d=>{if(d.broker===b)d.broker=n});D.plans.forEach(p=>{if(p.broker===b)p.broker=n});if(D.cash&&D.cash[b]!=null){D.cash[n]=D.cash[b];delete D.cash[b]}
+  if(posFilter===b)posFilter=n;if(opFilter===b)opFilter=n;setBrokers(BROKERS.map(x=>x===b?n:x));toast("Renombrada")}
+function saveCfg(){D.goal=+v("c_goal")||0;save();toast("Guardado")}
+function imp(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x.ops)throw 0;D={...blank(),...x};save();toast("Copia importada");render()}catch(e){toast("Archivo no válido")}};r.readAsText(f)}
+let wipeArm=false;function wipe(){if(!wipeArm){wipeArm=true;document.getElementById("wipeMsg").textContent="Pulsa otra vez para confirmar el borrado.";return}D=blank();save();wipeArm=false;render()}
+function loadSeed(){D=JSON.parse(JSON.stringify(SEED));migrate();save();toast("Datos del PDF cargados");render()}
+function demo(){D=blank();const a1={id:uid(),name:"Vanguard Global Stock Index",ticker:"",isin:"IE00B03HCZ61",type:"Fondo indexado",price:62.4,pdate:new Date().toISOString()},
+  a2={id:uid(),name:"iShares Core MSCI World",ticker:"IWDA",isin:"IE00B4L5Y983",type:"ETF",price:104.2,pdate:new Date().toISOString()},
+  a3={id:uid(),name:"Apple",ticker:"AAPL",isin:"US0378331005",type:"Acción",price:205,pdate:new Date().toISOString()},
+  a4={id:uid(),name:"Bitcoin",ticker:"BTC",type:"Cripto",price:92000,pdate:new Date().toISOString()};D.assets=[a1,a2,a3,a4];
+  const y=new Date().getFullYear();D.ops=[{id:uid(),type:"buy",date:`${y-1}-01-31`,broker:"MyInvestor",asset:a1.id,qty:20,price:50,fee:0},{id:uid(),type:"buy",date:`${y-1}-03-15`,broker:"Trade Republic",asset:a2.id,qty:15,price:90,fee:1},
+  {id:uid(),type:"buy",date:`${y-1}-05-10`,broker:"Robinhood",asset:a3.id,qty:5,price:170,fee:0},{id:uid(),type:"sell",date:`${y}-02-20`,broker:"Robinhood",asset:a3.id,qty:2,price:230,fee:0},
+  {id:uid(),type:"buy",date:`${y-1}-06-01`,broker:"Revolut",asset:a4.id,qty:.01,price:60000,fee:1.5}];
+  D.plans=[{id:uid(),asset:a1.id,broker:"MyInvestor",amount:150,day:31,every:1,start:`${y}-08-01`,active:true,done:[],skip:[]}];
+  D.divs=[{id:uid(),date:`${y}-05-15`,broker:"Robinhood",asset:a3.id,gross:1.5,wh:.23,whes:.24}];D.snaps=[{d:`${y-1}-06-30`,v:2600,c:2550},{d:`${y-1}-12-31`,v:3300,c:3020},{d:`${y}-06-30`,v:3400,c:3020}];save();snap(true);render()}
+
+function openAsset(id){curAsset=id;view="asset";render()}
+function lotsOf(id){const E=engine();const L=[];for(const k in E.lots){const [a,b]=k.split("|");if(a!==id)continue;E.lots[k].forEach(l=>{if(l.q>1e-9)L.push({...l,broker:b})})}return L.sort((x,y)=>x.date.localeCompare(y.date))}
+function yrs(d1,d2){return(new Date(d2)-new Date(d1))/(365.25*864e5)}
+function vAsset(){const a=A(curAsset);const E=engine();const ops=D.ops.filter(o=>o.asset===curAsset||o.toAsset===curAsset).sort((x,y)=>y.date.localeCompare(x.date));
+  const pos=E.pos.filter(p=>p.asset===curAsset);const q=pos.reduce((s,p)=>s+p.q,0),c=pos.reduce((s,p)=>s+p.cost,0);const rl=E.sales.filter(x=>x.asset===curAsset).reduce((s,x)=>s+x.pl,0);
+  const fees=ops.reduce((s,o)=>s+(+o.fee||0),0);const brs=[...new Set(ops.map(o=>o.asset===curAsset?o.broker:o.toBroker))];
+  // mini chart: invertido abierto del activo a final de mes
+  const keep=D.ops;const od=keep.filter(o=>o.asset===curAsset||o.toAsset===curAsset).map(o=>o.date).sort();let mini="";
+  if(od.length){const ds=[];let y=+od[0].slice(0,4),m=+od[0].slice(5,7)-1;const t=today();while(true){const e=new Date(y,m+1,0).toLocaleDateString("sv-SE");const cur=e>=t;ds.push(cur?t:e);if(cur||ds.length>600)break;m++;if(m>11){m=0;y++}}
+    const ser=ds.map(d=>{D.ops=keep.filter(o=>o.date<=d);const v=engine().pos.filter(p=>p.asset===curAsset).reduce((s,p)=>s+p.cost,0);D.ops=keep;return[d,v]});
+    if(ser.length>1){const W=320,H=90,P=10;const mx=Math.max(...ser.map(x=>x[1]))||1;const X=i=>P+i*(W-2*P)/(ser.length-1),Y=v=>H-P-v/mx*(H-2*P);
+      mini=`<svg viewBox="0 0 ${W} ${H}" width="100%"><path d="${ser.map((x,i)=>`${i?"L":"M"}${X(i)},${Y(x[1])}`).join("")}" stroke="#4c8dd6" fill="none" stroke-width="2.5" stroke-linejoin="round"/>${ser.map((x,i)=>`<circle cx="${X(i)}" cy="${Y(x[1])}" r="2.5" fill="#4c8dd6"><title>${x[0]}: ${fmt(x[1])}</title></circle>`).join("")}</svg><p class="mu">Invertido a final de cada mes (de ${ser[0][0].slice(0,7)} a hoy).</p>`}}
+  const sim=a.simPrice||"";const simD=a.simDate||today();
+  return`<button class="btn sm sec" onclick="go('pos')">${I("back",14)} Cartera</button><div style="height:10px"></div>
+  <div class="card"><div class="flex"><div><h2 style="margin:0">${a.name}</h2><span class="mu">${a.type||""} ${a.ticker?"· "+a.ticker:""} ${a.isin?"· "+a.isin:""}</span></div><button class="btn sm sec" onclick="editAsset('${a.id}')">${I("edit",14)}</button></div>
+  ${(a.tags||[]).length?`<div style="margin-top:6px">${a.tags.map(t=>`<span class="tag">#${t}</span>`).join("")}</div>`:""}${a.note?`<p class="mu">${a.note}</p>`:""}</div>
+  <div class="kpis"><div class="kpi"><small>Invertido abierto</small><b>${fmt(c)}</b></div><div class="kpi"><small>Participaciones</small><b>${fq(q)}</b></div>
+  <div class="kpi"><small>Precio medio de compra</small><b>${q?fmt(c/q):"–"}</b></div><div class="kpi"><small>Realizado en ventas</small><b class="${cls(rl)}">${fmt(rl)}</b></div></div><br>
+  <p class="mu">Plataformas: ${brs.join(", ")||"–"} · Comisiones pagadas: ${fmt(fees)}</p>
+  ${mini?`<div class="card"><h2>${I("chart")} Evolución de la inversión</h2>${mini}</div>`:""}
+  ${q?`<div class="card"><h2>${I("calc")} ¿Cuánto ha generado cada aportación?</h2><p class="mu">Escribe un precio (actual o el que imagines dentro de X años) y la fecha de valoración. Se calcula sobre las participaciones que todavía tienes de cada compra (FIFO).</p>
+   <div class="row"><div><label>Precio por participación €</label><input type="number" step="any" inputmode="decimal" id="simP" value="${sim}" oninput="simRun()"></div><div><label>Fecha de valoración</label><input type="date" id="simD" value="${simD}" onchange="simRun()"></div></div>
+   <div class="seg" style="margin-top:8px">${[0,5,10,20].map(n=>`<button onclick="simYears(${n})">${n?"+"+n+" años":"Hoy"}</button>`).join("")}</div>
+   <div id="simOut"></div></div>`:""}
+  ${q?`<div class="card"><h2>${I("calc")} Simulador de venta</h2>
+   <div class="row"><div><label>Plataforma</label><select id="svB" onchange="sellSim()">${pos.map(p=>`<option>${p.broker}</option>`).join("")}</select></div><div><label>Participaciones a vender</label><input type="number" step="any" inputmode="decimal" id="svQ" oninput="sellSim()"></div></div>
+   <div class="row"><div><label>Precio de venta €</label><input type="number" step="any" inputmode="decimal" id="svP" value="${sim}" oninput="sellSim()"></div><div><label>Fecha de venta</label><input type="date" id="svD" value="${today()}" onchange="sellSim()"></div></div><div id="svOut"></div></div>`:""}
+  <div class="card"><h2>Historial del activo</h2>${ops.map(o=>o.type=="transfer"?`<div class="item"><div class="flex"><span><span class="tag">TRASPASO ${o.asset===curAsset?"SALIDA":"ENTRADA"}</span>${new Date(o.date).toLocaleDateString("es-ES")}</span><b>${fmt((E.trs[o.id]||{}).cost||0)}</b></div><div class="mu">${o.asset===curAsset?"A "+A(o.toAsset).name+" · "+fq(o.qty)+" uds":"Desde "+A(o.asset).name+" · "+fq(o.toQty)+" uds"}</div></div>`:`<div class="item"><div class="flex"><span><span class="tag ${o.type=="buy"?"buy":"sell"}">${o.type=="buy"?"COMPRA":"VENTA"}</span>${new Date(o.date).toLocaleDateString("es-ES")}</span><span><b>${fmt(amt(o))}</b> <button class="btn sm sec" onclick="editOp('${o.id}')">${I("edit",14)}</button></span></div><div class="mu">${o.broker} · ${fq(o.qty)} × ${fmt(+o.price)} ${o.note?"· "+o.note:""}</div></div>`).join("")||'<p class="mu">Sin operaciones.</p>'}</div>`}
+function simYears(n){const d=new Date();d.setFullYear(d.getFullYear()+n);document.getElementById("simD").value=d.toLocaleDateString("sv-SE");simRun()}
+function simRun(){const p=+v("simP"),d=v("simD")||today();const a=A(curAsset);a.simPrice=p||"";a.simDate=d;save();const out=document.getElementById("simOut");if(!p){out.innerHTML="";return}
+  const L=lotsOf(curAsset);let tc=0,tv=0;const rows=L.map(l=>{const val=l.q*p,g=val-l.c,y=yrs(l.date,d);tc+=l.c;tv+=val;const cagr=y>0.08?(Math.pow(val/l.c,1/y)-1)*100:NaN;
+    return`<tr><td>${new Date(l.date).toLocaleDateString("es-ES")}<br><span class="mu">${l.broker.split(" ")[0]} · ${y.toFixed(1)} años</span></td><td>${fmt(l.c)}</td><td>${fmt(val)}</td><td class="${cls(g)}">${fmt(g)}<br><span style="font-size:11px">${pct(g/l.c*100)}${isFinite(cagr)?" · "+pct(cagr).replace(" %","%")+"/año":""}</span></td></tr>`}).join("");
+  out.innerHTML=`<div class="kpis" style="margin:10px 0"><div class="kpi"><small>Valor a ${new Date(d).toLocaleDateString("es-ES")}</small><b>${fmt(tv)}</b></div><div class="kpi"><small>Ganancia total</small><b class="${cls(tv-tc)}">${fmt(tv-tc)}</b><span class="${cls(tv-tc)}" style="font-size:12px">${pct((tv-tc)/tc*100)}</span></div></div>
+  <table><tr><th>Aportación</th><th>Coste</th><th>Valor</th><th>Ganancia</th></tr>${rows}</table><p class="mu">Simulación con el precio que escribes; no es una previsión. No incluye impuestos.</p>`}
+function sellSim(){const out=document.getElementById("svOut");const b=v("svB"),q=+v("svQ"),p=+v("svP"),d=v("svD")||today();if(!q||!p){out.innerHTML="";return}
+  const L=lotsOf(curAsset).filter(l=>l.broker===b);const have=L.reduce((s,l)=>s+l.q,0);let rem=q,cost=0;const used=[];
+  for(const l of L){if(rem<=1e-12)break;const t=Math.min(rem,l.q);const c=l.c*t/l.q;cost+=c;rem-=t;used.push({date:l.date,q:t,c})}
+  const proc=q*p,pl=proc-cost;const a=A(curAsset);const win=(a.type=="Fondo indexado"||a.type=="Plan de pensiones")?12:2;
+  const lo=new Date(d);lo.setMonth(lo.getMonth()-win);const hi=new Date(d);hi.setMonth(hi.getMonth()+win);
+  const recent=D.ops.filter(o=>o.type=="buy"&&o.asset===curAsset&&new Date(o.date)>=lo&&new Date(o.date)<=new Date(d));const plan=D.plans.some(x=>x.active&&x.asset===curAsset);
+  out.innerHTML=`${rem>1e-9?`<div class="warn">${I("alert")} Solo tienes ${fq(have)} participaciones en ${b}.</div>`:""}
+  <div class="kpis" style="margin:10px 0"><div class="kpi"><small>Valor de transmisión</small><b>${fmt(proc)}</b></div><div class="kpi"><small>Valor de adquisición (FIFO)</small><b>${fmt(cost)}</b></div>
+  <div class="kpi"><small>Ganancia/pérdida</small><b class="${cls(pl)}">${fmt(pl)}</b></div><div class="kpi"><small>Impuesto orientativo</small><b>${pl>0?fmt(taxOf(pl)):"0,00 €"}</b></div></div>
+  <table><tr><th>Compra que se vende</th><th>Uds</th><th>Coste</th></tr>${used.map(u=>`<tr><td>${new Date(u.date).toLocaleDateString("es-ES")}</td><td>${fq(u.q)}</td><td>${fmt(u.c)}</td></tr>`).join("")}</table>
+  ${pl<0&&(recent.length||plan)?`<div class="warn">${I("alert")} Si vendes con pérdidas y has comprado este activo en los ${win} meses anteriores${plan?" (o tienes una aportación automática activa que comprará en los "+win+" meses siguientes)":""}, esa pérdida podría no computar este año.</div>`:""}
+  <p class="mu">El impuesto se estima como si esta fuera tu única ganancia del año (19 % hasta 6.000 €…).</p>`}
+function go(x){view=x;render()}
+function render(){document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v==(view=="asset"?"pos":view)));
+  const V={dash:vDash,pos:vPos,ops:vOps,plans:vPlans,tax:vTax,cfg:vCfg,asset:vAsset};document.getElementById("main").innerHTML=V[view]();window.scrollTo(0,0);if(view=="asset"&&document.getElementById("simP")&&v("simP"))simRun()}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.v));
+document.querySelectorAll("[data-i]").forEach(e=>e.innerHTML=I(e.dataset.i,20));document.getElementById("hd").innerHTML=I("chart",18)+" Mis Inversiones";document.getElementById("privBtn").innerHTML=I("eye",16);
+migrate();render();
+</script></body></html>
